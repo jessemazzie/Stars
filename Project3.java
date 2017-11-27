@@ -11,12 +11,25 @@ public class Project3 {
     }
 }
 
-class MyFrameClass extends JFrame {
+class MyFrameClass extends JFrame implements ActionListener {
     MyPanel drawPanel;
+    Timer timer;
+    Vector<LivingThing> groupOfThings;
 
     MyFrameClass() {
         Container cp;
         cp = getContentPane();
+
+        groupOfThings = new Vector<LivingThing>();
+
+        //Create random stars.
+        for(int i = 0; i < 3; i++)
+            groupOfThings.addElement(Star.getRandom());
+
+        timer = new Timer(10, this);
+        timer.setCoalesce(true);
+        timer.setActionCommand("TIMER");
+        timer.start();
 
         drawPanel = new MyPanel();
         setupMainFrame();
@@ -39,20 +52,29 @@ class MyFrameClass extends JFrame {
 
         setVisible(true);
     }
+    
+    /**
+     * Required for implementing ActionListener.
+     * 
+     */        
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        if(ae.getActionCommand().equals("TIMER")) {
+            for(LivingThing star : myStars) {
+                star.updatePosition();
+            }
+            drawPanel.repaint();
+            System.out.println("Action event for timer received.");
+        }
+    }
 }
 
-class MyPanel extends JPanel implements ActionListener {
+class MyPanel extends JPanel {
     Random rand = new Random();
-    Timer timer;
     Vector<LivingThing> myStars = new Vector<LivingThing>();
 
     MyPanel() {
-        for(int i = 0; i < 3; i++)
-            myStars.addElement(Star.getRandom());
-        timer = new Timer( 10, this);
-        timer.setCoalesce(true);
-        timer.setActionCommand("TIMER");
-        timer.start();
+
         System.out.println(this.getWidth());
     }
  
@@ -65,17 +87,6 @@ class MyPanel extends JPanel implements ActionListener {
         for(LivingThing star : myStars) {
             star.draw(g);
         }
-        System.out.println(this.getWidth());    
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        if(ae.getActionCommand().equals("TIMER")) {
-            for(LivingThing star : myStars) {
-                star.updatePosition();
-            }
-            repaint();
-            System.out.println("Action event for timer received.");
-        }
+        System.out.println("Width: " + this.getWidth());    
     }
 }
