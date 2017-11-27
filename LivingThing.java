@@ -13,17 +13,19 @@ public abstract class LivingThing {
     long lifeTimeMillis;
     long timeLastUpdated;
 
-    void updatePosition() {
+    void updatePosition(long currentTimeMillis) {
+        long deltaTime = currentTimeMillis - timeLastUpdated;
+        System.out.println("Time delta is: " + deltaTime); 
 
         if(currentXPosition >= 470 || currentXPosition <= 10) //TODO: Find these values dynamically.
             xSpeed = -xSpeed;
         if(currentYPosition >= 250 || currentYPosition <= 10) //TODO: Find these values dynamically.
             ySpeed = -ySpeed;
 
-        currentXPosition = currentXPosition + xSpeed;
-        currentYPosition = currentYPosition + ySpeed;
-        System.out.println("Current x pos: " + currentXPosition);
-        System.out.println("Current y pos: " + currentYPosition);
+        currentXPosition = (int) (currentXPosition + xSpeed * deltaTime); //ATTN: Lossy conversion.
+        currentYPosition = (int) (currentYPosition + ySpeed * deltaTime); //ATTN: Lossy conversion.
+        System.out.println("Current x position: " + currentXPosition);
+        System.out.println("Current y position: " + currentYPosition);
     }
 
     void updateLinerVelocity(int deltaScaledMillis) {

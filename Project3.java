@@ -26,12 +26,12 @@ class MyFrameClass extends JFrame implements ActionListener {
         for(int i = 0; i < 3; i++)
             groupOfThings.addElement(Star.getRandom());
 
-        timer = new Timer(10, this);
+        timer = new Timer(1, this);
         timer.setCoalesce(true);
         timer.setActionCommand("TIMER");
         timer.start();
 
-        drawPanel = new MyPanel();
+        drawPanel = new MyPanel(groupOfThings);
         setupMainFrame();
 
         cp.add(drawPanel, BorderLayout.CENTER);
@@ -52,30 +52,37 @@ class MyFrameClass extends JFrame implements ActionListener {
 
         setVisible(true);
     }
-    
+
     /**
      * Required for implementing ActionListener.
      * 
      */        
     @Override
     public void actionPerformed(ActionEvent ae) {
+        long currentTimeMillis; 
         if(ae.getActionCommand().equals("TIMER")) {
-            for(LivingThing star : myStars) {
-                star.updatePosition();
+            currentTimeMillis = System.currentTimeMillis();
+            timer.stop();
+            
+            for(LivingThing thing : groupOfThings) {
+                thing.updatePosition(currentTimeMillis);
             }
             drawPanel.repaint();
             System.out.println("Action event for timer received.");
+            timer.start();
         }
     }
 }
 
+/**
+ * JPanel subclass created for the purpose of overriding paintComponent to paint a group of living things. 
+ */
 class MyPanel extends JPanel {
     Random rand = new Random();
-    Vector<LivingThing> myStars = new Vector<LivingThing>();
+    Vector<LivingThing> groupOfThings;
 
-    MyPanel() {
-
-        System.out.println(this.getWidth());
+    MyPanel(Vector<LivingThing> groupOfThings) {
+        this.groupOfThings = groupOfThings;
     }
  
     @Override 
@@ -84,9 +91,10 @@ class MyPanel extends JPanel {
         Graphics2D g;
         g = (Graphics2D) g1; //Graphics2D objects are easier to work with.
 
-        for(LivingThing star : myStars) {
-            star.draw(g);
+        for(LivingThing thing : groupOfThings) {
+            thing.draw(g);
         }
+
         System.out.println("Width: " + this.getWidth());    
     }
 }

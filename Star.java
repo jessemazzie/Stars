@@ -21,6 +21,7 @@ public class Star extends LivingThing {
         star.currentYPosition = rand.nextInt(250);
         star.xSpeed = 1 + rand.nextInt(5);
         star.ySpeed = 1 + rand.nextInt(5);
+        star.timeLastUpdated = System.currentTimeMillis(); //set last updated time to time of creation.
         star.energyDecayFactor = 0.95;
 
         return star;    
