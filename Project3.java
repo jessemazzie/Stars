@@ -13,20 +13,36 @@ public class Project3 {
 
 class MyFrameClass extends JFrame implements ActionListener {
     MyPanel drawPanel;
+    JPanel buttonPanel;
+    JSlider timeScalarSlider;
     Timer timer;
     Vector<LivingThing> groupOfThings;
+    long timeLastUpdated;
 
     MyFrameClass() {
         Container cp;
         cp = getContentPane();
-
+        
+        timeScalarSlider = new JSlider(0, 200);
+        timeScalarSlider.setMajorTickSpacing(10);
+        timeScalarSlider.setMinorTickSpacing(5);
+        timeScalarSlider.setPaintTicks(true);
+        
+        buttonPanel = new JPanel();
+        buttonPanel.add(createNewButton("Add new star", "NEW_STAR"));
+        buttonPanel.add(createNewButton("Kill all stars", "KILL_ALL"));
+        buttonPanel.add(timeScalarSlider);
+        
+        
+        
         groupOfThings = new Vector<LivingThing>();
 
         //Create random stars.
         for(int i = 0; i < 3; i++)
             groupOfThings.addElement(Star.getRandom());
+        timeLastUpdated = System.currentTimeMillis();
 
-        timer = new Timer(1, this);
+        timer = new Timer(10, this);
         timer.setCoalesce(false);
         timer.setActionCommand("TIMER");
         timer.start();
@@ -35,6 +51,7 @@ class MyFrameClass extends JFrame implements ActionListener {
         setupMainFrame();
 
         cp.add(drawPanel, BorderLayout.CENTER);
+        cp.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     void setupMainFrame() {
@@ -52,6 +69,16 @@ class MyFrameClass extends JFrame implements ActionListener {
 
         setVisible(true);
     }
+    
+    JButton createNewButton(String title, String actionCommand) {
+    	JButton tempButton;
+    	
+    	tempButton = new JButton(title);
+    	tempButton.setActionCommand(actionCommand);
+    	tempButton.addActionListener(this);
+    	
+    	return tempButton;
+    }
 
     /**
      * Required for implementing ActionListener.
@@ -62,14 +89,18 @@ class MyFrameClass extends JFrame implements ActionListener {
         long currentTimeMillis; 
         if(ae.getActionCommand().equals("TIMER")) {
             currentTimeMillis = System.currentTimeMillis();
-            timer.stop();
             
             for(LivingThing thing : groupOfThings) {
-                thing.updatePosition(currentTimeMillis);
+                thing.updatePosition(currentTimeMillis - timeLastUpdated);
             }
+            timeLastUpdated = currentTimeMillis;
             drawPanel.repaint();
             System.out.println("Action event for timer received.");
-            timer.start();
+        } else if(ae.getActionCommand().equals("NEW_STAR")) {
+        	groupOfThings.add(Star.getRandom());
+        } else if(ae.getActionCommand().equals("KILL_ALL")) {
+        	//TODO: Kill all here.
+        	groupOfThings.removeAllElements();
         }
     }
 }

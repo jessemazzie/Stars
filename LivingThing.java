@@ -2,35 +2,34 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class LivingThing {
-    int currentXPosition;
-    int currentYPosition;
-    int xSpeed;
-    int ySpeed;
+    double currentXPosition;
+    double currentYPosition;
+    double xSpeed;
+    double ySpeed;
     double orientationAngle; //in radians
     double angularVelocity;
-    double linearAcceleration;
     double energyDecayFactor;
     Color color;
-    static double timeScalar;
+    static double timeScalar = 1.0;
+    static int screenSize;
     long lifeTimeMillis;
     long timeLastUpdated;
 
-    void updatePosition(long currentTimeMillis) {
-        long deltaTime = currentTimeMillis - timeLastUpdated;
+    void updatePosition(long deltaTime) {
         System.out.println("Time delta is: " + deltaTime); 
 
-        if(currentXPosition >= 470 || currentXPosition <= 10) //TODO: Find these values dynamically.
-            xSpeed = -xSpeed;
-        if(currentYPosition >= 250 || currentYPosition <= 10) //TODO: Find these values dynamically.
-            ySpeed = -ySpeed;
+        if(currentXPosition >= 470 || currentXPosition <= 10) 
+            xSpeed = -xSpeed * energyDecayFactor;
+        if(currentYPosition >= 250 || currentYPosition <= 10)
+            ySpeed = -ySpeed * energyDecayFactor;
 
-        currentXPosition = (int) (currentXPosition + xSpeed * deltaTime); //ATTN: Lossy conversion.
-        currentYPosition = (int) (currentYPosition + ySpeed * deltaTime); //ATTN: Lossy conversion.
+        currentXPosition = (int) (currentXPosition + xSpeed * deltaTime * timeScalar); //ATTN: Lossy conversion.
+        currentYPosition = (int) (currentYPosition + ySpeed * deltaTime * timeScalar); //ATTN: Lossy conversion.
         System.out.println("Current x position: " + currentXPosition);
         System.out.println("Current y position: " + currentYPosition);
     }
 
-    void updateLinerVelocity(int deltaScaledMillis) {
+    void updateLinearVelocity(int deltaScaledMillis) {
 
     }
 
