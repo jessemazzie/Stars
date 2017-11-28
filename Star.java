@@ -24,6 +24,7 @@ public class Star extends LivingThing {
         star.orientationAngle = 3 + rand.nextInt(6);
         star.timeLastUpdated = System.currentTimeMillis(); //set last updated time to time of creation.
         star.energyDecayFactor = 0.95;
+        star.color = Color.YELLOW;
 
         return star;    
     }
@@ -35,7 +36,7 @@ public class Star extends LivingThing {
         // g.drawRect(currentXPosition, currentYPosition, 40, 40);
         int[] x = new int[numTips * 2];
         int[] y = new int[numTips * 2];
-
+        g.setColor(color);
         for(int i = 0; i < numTips * 2; i += 2) {
             x[i] = currentXPosition + (int) (innerRadius * Math.cos(theta));
             y[i] = currentYPosition + (int) (innerRadius * Math.sin(theta));

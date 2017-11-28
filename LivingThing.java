@@ -10,6 +10,7 @@ public abstract class LivingThing {
     double angularVelocity;
     double linearAcceleration;
     double energyDecayFactor;
+    Color color;
     static double timeScalar;
     long lifeTimeMillis;
     long timeLastUpdated;
@@ -23,8 +24,8 @@ public abstract class LivingThing {
         if(currentYPosition >= 250 || currentYPosition <= 10) //TODO: Find these values dynamically.
             ySpeed = -ySpeed;
 
-        // currentXPosition = (int) (currentXPosition + xSpeed * deltaTime); //ATTN: Lossy conversion.
-        // currentYPosition = (int) (currentYPosition + ySpeed * deltaTime); //ATTN: Lossy conversion.
+        currentXPosition = (int) (currentXPosition + xSpeed * deltaTime); //ATTN: Lossy conversion.
+        currentYPosition = (int) (currentYPosition + ySpeed * deltaTime); //ATTN: Lossy conversion.
         System.out.println("Current x position: " + currentXPosition);
         System.out.println("Current y position: " + currentYPosition);
     }
