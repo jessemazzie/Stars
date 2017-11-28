@@ -27,7 +27,7 @@ class MyFrameClass extends JFrame implements ActionListener {
             groupOfThings.addElement(Star.getRandom());
 
         timer = new Timer(1, this);
-        timer.setCoalesce(true);
+        timer.setCoalesce(false);
         timer.setActionCommand("TIMER");
         timer.start();
 
