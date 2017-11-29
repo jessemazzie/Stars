@@ -16,7 +16,7 @@ public abstract class LivingThing {
     long timeLastUpdated;
 
     void updatePosition(long deltaTime) {
-        System.out.println("Time delta is: " + deltaTime); 
+        //System.out.println("Time delta is: " + deltaTime); 
 
         if(currentXPosition >= 470 || currentXPosition <= 10) 
             xSpeed = -xSpeed * energyDecayFactor;
@@ -25,8 +25,8 @@ public abstract class LivingThing {
 
         currentXPosition = (int) (currentXPosition + xSpeed * deltaTime * timeScalar); //ATTN: Lossy conversion.
         currentYPosition = (int) (currentYPosition + ySpeed * deltaTime * timeScalar); //ATTN: Lossy conversion.
-        System.out.println("Current x position: " + currentXPosition);
-        System.out.println("Current y position: " + currentYPosition);
+//        System.out.println("Current x position: " + currentXPosition);
+//        System.out.println("Current y position: " + currentYPosition);
     }
 
     void updateLinearVelocity(int deltaScaledMillis) {

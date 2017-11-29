@@ -11,9 +11,10 @@ public class Project3 {
     }
 }
 
-class MyFrameClass extends JFrame implements ActionListener {
+class MyFrameClass extends JFrame implements ActionListener, ChangeListener {
     MyPanel drawPanel;
     JPanel buttonPanel;
+    JPanel sliderPanel;
     JSlider timeScalarSlider;
     Timer timer;
     Vector<LivingThing> groupOfThings;
@@ -24,14 +25,20 @@ class MyFrameClass extends JFrame implements ActionListener {
         cp = getContentPane();
         
         timeScalarSlider = new JSlider(0, 200);
-        timeScalarSlider.setMajorTickSpacing(10);
-        timeScalarSlider.setMinorTickSpacing(5);
+        timeScalarSlider.setPaintLabels(true);
+        timeScalarSlider.addChangeListener(this); 
+        timeScalarSlider.setMajorTickSpacing(50);
+        timeScalarSlider.setMinorTickSpacing(25);
         timeScalarSlider.setPaintTicks(true);
+        setJSliderLabels(timeScalarSlider);
         
         buttonPanel = new JPanel();
         buttonPanel.add(createNewButton("Add new star", "NEW_STAR"));
         buttonPanel.add(createNewButton("Kill all stars", "KILL_ALL"));
-        buttonPanel.add(timeScalarSlider);
+        
+        sliderPanel = new JPanel();
+        sliderPanel.add(new JLabel("Speed:"));
+        sliderPanel.add(timeScalarSlider);
         
         
         
@@ -51,6 +58,7 @@ class MyFrameClass extends JFrame implements ActionListener {
         setupMainFrame();
 
         cp.add(drawPanel, BorderLayout.CENTER);
+        cp.add(sliderPanel, BorderLayout.EAST);
         cp.add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -79,6 +87,17 @@ class MyFrameClass extends JFrame implements ActionListener {
     	
     	return tempButton;
     }
+    
+    void setJSliderLabels(JSlider sliderToLabel) {
+    	Hashtable<Integer, JLabel> tempTable = new Hashtable<Integer, JLabel>();
+    	
+    	//This is an Integer rather than a primitive int because Hashtable requires it
+    	for(Integer i = sliderToLabel.getMinimum(); i < sliderToLabel.getMaximum(); i += sliderToLabel.getMajorTickSpacing()) {
+    		tempTable.put(i, new JLabel(i / 100.0 + ""));
+    	}
+    	
+    	sliderToLabel.setLabelTable(tempTable);
+    }
 
     /**
      * Required for implementing ActionListener.
@@ -95,7 +114,7 @@ class MyFrameClass extends JFrame implements ActionListener {
             }
             timeLastUpdated = currentTimeMillis;
             drawPanel.repaint();
-            System.out.println("Action event for timer received.");
+            //System.out.println("Action event for timer received.");
         } else if(ae.getActionCommand().equals("NEW_STAR")) {
         	groupOfThings.add(Star.getRandom());
         } else if(ae.getActionCommand().equals("KILL_ALL")) {
@@ -103,6 +122,16 @@ class MyFrameClass extends JFrame implements ActionListener {
         	groupOfThings.removeAllElements();
         }
     }
+
+	@Override
+	public void stateChanged(ChangeEvent ce) {
+		JSlider source = (JSlider) ce.getSource(); //JSliders are the only components that we have that generate ChangeEvents
+		
+		if(ce.getSource() == timeScalarSlider) {
+			System.out.println("Value of time scalar slider changed to: " + source.getValue()/100d);
+			Star.timeScalar = source.getValue()/100d;
+		}
+	}
 }
 
 /**
