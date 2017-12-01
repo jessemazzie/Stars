@@ -11,7 +11,7 @@ public class Project3 {
     }
 }
 
-class MyFrameClass extends JFrame implements ActionListener, ChangeListener {
+class MyFrameClass extends JFrame implements ActionListener, ChangeListener, MortalityListener {
     MyPanel drawPanel;
     JPanel buttonPanel;
     JPanel sliderPanel;
@@ -47,6 +47,10 @@ class MyFrameClass extends JFrame implements ActionListener, ChangeListener {
         //Create random stars.
         for(int i = 0; i < 3; i++)
             groupOfThings.addElement(Star.getRandom());
+        
+        for(int i = 0; i < groupOfThings.size(); i++)
+        	groupOfThings.get(i).addMortalityListener(this);
+        
         timeLastUpdated = System.currentTimeMillis();
 
         timer = new Timer(10, this);
@@ -108,15 +112,18 @@ class MyFrameClass extends JFrame implements ActionListener, ChangeListener {
         long currentTimeMillis; 
         if(ae.getActionCommand().equals("TIMER")) {
             currentTimeMillis = System.currentTimeMillis();
-            
-            for(LivingThing thing : groupOfThings) {
-                thing.updatePosition(currentTimeMillis - timeLastUpdated);
+            if(!groupOfThings.isEmpty()) {
+            	for(LivingThing thing : groupOfThings) {
+            		thing.update(currentTimeMillis - timeLastUpdated);
+            	}
             }
+            
             timeLastUpdated = currentTimeMillis;
             drawPanel.repaint();
             //System.out.println("Action event for timer received.");
         } else if(ae.getActionCommand().equals("NEW_STAR")) {
         	groupOfThings.add(Star.getRandom());
+        	groupOfThings.lastElement().addMortalityListener(this);
         } else if(ae.getActionCommand().equals("KILL_ALL")) {
         	//TODO: Kill all here.
         	groupOfThings.removeAllElements();
@@ -131,6 +138,12 @@ class MyFrameClass extends JFrame implements ActionListener, ChangeListener {
 			System.out.println("Value of time scalar slider changed to: " + source.getValue()/100d);
 			Star.timeScalar = source.getValue()/100d;
 		}
+	}
+	
+	@Override
+	public void deathNoticeEventReceived(MortalObject thingThatDies) {
+		System.out.println("Death notice received.");
+		groupOfThings.remove(thingThatDies);
 	}
 }
 
@@ -155,6 +168,6 @@ class MyPanel extends JPanel {
             thing.draw(g);
         }
 
-        System.out.println("Width: " + this.getWidth());    
+        //System.out.println("Width: " + this.getWidth());    
     }
 }

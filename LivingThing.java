@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
-public abstract class LivingThing {
+public abstract class LivingThing implements MortalObject {
     double currentXPosition;
     double currentYPosition;
     double xSpeed;
@@ -10,10 +11,21 @@ public abstract class LivingThing {
     double angularVelocity;
     double energyDecayFactor;
     Color color;
+    Vector<MortalityListener> mortalityListeners;
     static double timeScalar = 1.0;
     static int screenSize;
-    long lifeTimeMillis;
+    long timeOfDeath;
     long timeLastUpdated;
+    
+    LivingThing() {}
+    
+    void update(long deltaTime) {
+    	if(timeOfDeath < System.currentTimeMillis())
+    		death();
+    	
+    	updateAngularVelocity(deltaTime);
+    	updatePosition(deltaTime);
+    }
 
     void updatePosition(long deltaTime) {
         //System.out.println("Time delta is: " + deltaTime); 
@@ -29,8 +41,8 @@ public abstract class LivingThing {
 //        System.out.println("Current y position: " + currentYPosition);
     }
 
-    void updateLinearVelocity(int deltaScaledMillis) {
-
+    void updateAngularVelocity(long deltaScaledMillis) {
+    	orientationAngle = orientationAngle +  angularVelocity * timeScalar;
     }
 
     abstract void draw(Graphics2D g);

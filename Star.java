@@ -7,7 +7,9 @@ public class Star extends LivingThing {
     int numTips;
     int innerRadius;
     int outerRadius;
-
+    
+    Star() {}
+    
     public static Star getRandom() {
         Star star = new Star();
 
@@ -15,15 +17,17 @@ public class Star extends LivingThing {
             rand = new Random();
         
         star.numTips = 4 + rand.nextInt(4); //between 4 and 7 points on the star
-        star.innerRadius = 5 + rand.nextInt(5);
-        star.outerRadius = star.innerRadius + 4 + rand.nextInt(10);
+        star.innerRadius = 5 + rand.nextInt(10);
+        star.outerRadius = star.innerRadius + 6 + rand.nextInt(20);
         star.currentXPosition = rand.nextInt(250);
         star.currentYPosition = rand.nextInt(250);
         star.xSpeed = 5 - rand.nextInt(10);
         star.ySpeed = 5 - rand.nextInt(10);
         star.orientationAngle = 1 + rand.nextInt(6);
+        star.angularVelocity = 1 + rand.nextDouble();
         star.timeLastUpdated = System.currentTimeMillis(); //set last updated time to time of creation.
         star.energyDecayFactor = 0.95;
+        star.timeOfDeath = System.currentTimeMillis() + rand.nextLong() % 5000;
         star.color = Color.BLACK;
 
         return star;    
@@ -52,4 +56,18 @@ public class Star extends LivingThing {
 
         g.drawPolygon(x, y, numTips * 2);
     }
+
+	@Override
+	public void death() {
+		for(MortalityListener ml : mortalityListeners)
+			ml.deathNoticeEventReceived(this);
+	}
+
+	@Override
+	public void addMortalityListener(MortalityListener ml) {
+		if(mortalityListeners == null) 
+			mortalityListeners = new Vector<MortalityListener>();
+		
+		mortalityListeners.add(ml);
+	}
 }
